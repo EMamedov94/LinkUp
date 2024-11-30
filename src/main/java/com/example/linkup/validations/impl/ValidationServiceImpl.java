@@ -3,6 +3,7 @@ package com.example.linkup.validations.impl;
 import com.example.linkup.exceptions.InvalidLoginOrPasswordException;
 import com.example.linkup.exceptions.UserAlreadyExistsException;
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.UserDto;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.validations.ValidationService;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class ValidationServiceImpl implements ValidationService {
 
     // Validation new user for registration
     @Override
-    public void validateNewUser(User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
+    public void validateNewUser(UserDto userDto) {
+        if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new UserAlreadyExistsException();
         }
     }

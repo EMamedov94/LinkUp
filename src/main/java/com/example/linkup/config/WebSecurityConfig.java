@@ -31,9 +31,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
                                 "/",
-                                "/login",
-                                "/logout",
-                                "/registrationNewUser").permitAll()
+                                "/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionAuthenticationStrategy ->

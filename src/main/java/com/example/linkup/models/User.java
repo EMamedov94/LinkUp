@@ -25,13 +25,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotNull(message = "Логин не может быть пустым")
-    @Size(min = 6, max = 20, message = "Длина логина может быть от 6 до 20 символов")
     private String username;
-
-    @NotNull(message = "Пароль не может быть пустым")
-    @Size(min = 6, max = 20, message = "Длина пароля может быть от 6 до 20 символов")
     private String password;
 
     private String firstName;

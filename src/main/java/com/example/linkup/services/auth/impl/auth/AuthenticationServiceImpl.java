@@ -3,6 +3,7 @@ package com.example.linkup.services.auth.impl.auth;
 import com.example.linkup.config.JwtService;
 import com.example.linkup.enums.Role;
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.UserDto;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.auth.AuthenticationService;
 import com.example.linkup.validations.ValidationService;
@@ -25,7 +26,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // Login user
     @Override
     public User loginUser(User loginUser) {
-
         User user = validationService.validateCredentials(loginUser.getUsername(), loginUser.getPassword());
 
         authenticationManager.authenticate(
@@ -41,12 +41,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // Registration new user
     @Override
-    public void registrationNewUser(User user) {
-        validationService.validateNewUser(user);
+    public void registrationNewUser(UserDto userDto) {
+        validationService.validateNewUser(userDto);
 
-        var newUser = User.builder()
-                .username(user.getUsername())
-                .password(passwordEncoder.encode(user.getPassword()))
+        User newUser = User.builder()
+                .username(userDto.getUsername())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .role(Role.ROLE_USER)
                 .build();
         userRepository.save(newUser);
