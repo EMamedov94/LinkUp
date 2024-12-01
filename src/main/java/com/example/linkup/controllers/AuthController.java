@@ -16,6 +16,23 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationService authenticationService;
 
+    // Login form
+    @GetMapping("/auth")
+    public String loginForm(Model model) {
+        model.addAttribute("user", new UserDto());
+        return "auth/auth";
+    }
+
+    @PostMapping("/login")
+    public String login(@Valid @ModelAttribute("user") UserDto user,
+                        BindingResult result) {
+        if (result.hasErrors()) {
+            return "auth/loginForm";
+        }
+        authenticationService.loginUser(user);
+        return "redirect:/";
+    }
+
     // Registration form
     @GetMapping("/registrationForm")
     public String registrationForm(Model model) {

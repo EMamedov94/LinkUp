@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Войти</h1>
+<form th:action="@{/auth/login}" th:object="${user}" method="post">
+    <label for="username">Имя:</label>
+    <input type="text" id="username" th:field="*{username}"/>
+    <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" th:field="*{password}"/>
+    <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+
+    <button type="submit">Войти</button>
+</form>
+</body>
+</html>

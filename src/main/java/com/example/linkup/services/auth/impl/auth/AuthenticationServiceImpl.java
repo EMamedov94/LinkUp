@@ -25,7 +25,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // Login user
     @Override
-    public User loginUser(User loginUser) {
+    public User loginUser(UserDto loginUser) {
         User user = validationService.validateCredentials(loginUser.getUsername(), loginUser.getPassword());
 
         authenticationManager.authenticate(
