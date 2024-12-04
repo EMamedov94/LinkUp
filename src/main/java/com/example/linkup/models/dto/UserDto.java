@@ -16,6 +16,7 @@ public class UserDto {
     @NotNull(message = "Пароль не может быть пустым")
     @Size(min = 6, message = "Длина пароля может быть от 6 до 20 символов")
     private String password;
+    private String token;
 
     @Enumerated(EnumType.STRING)
     private Role role;

@@ -14,6 +14,6 @@ public class GlobalExceptionHandler {
     public String handleUserAlreadyExistsException(UserAlreadyExistsException e, Model model) {
         model.addAttribute("usernameError", e.getMessage());
         model.addAttribute("user", new UserDto());
-        return "auth/registrationForm";
+        return "auth/authPage";
     }
 }

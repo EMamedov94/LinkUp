@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="eng">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <div class="sidebar">
+        <ul>
+            <li><a href="/">Главная</a></li>
+            <li><a href="/friends">Друзья</a></li>
+            <li><a href="/pages">Сообщения</a></li>
+            <li>
+                <form th:action="@{/profile/logout}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-info">
+            <img src="profile-photo.jpg" alt="Profile Photo" class="profile-photo">
+            <h2>Имя: <span th:text="${user.firstName}"></span></h2>
+            <h2>Фамилия: <span th:text="${user.lastName}"></span></h2>
+        </div>
+
+        <div class="posts">
+            <h1>Посты</h1>
+            <div class="post">
+                <p>Это мой первый пост!</p>
+            </div>
+            <div class="post">
+                <p>Сегодня был отличный день!</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -10,6 +10,7 @@ import com.example.linkup.validations.ValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        user.getUsername(),
-                        user.getPassword()
+                        loginUser.getUsername(),
+                        loginUser.getPassword()
                 )
         );
         var token = jwtService.generateToken(user);
@@ -41,7 +42,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // Registration new user
     @Override
-    public void registrationNewUser(UserDto userDto) {
+    public void registrationNewUser(User userDto) {
         validationService.validateNewUser(userDto);
 
         User newUser = User.builder()
@@ -50,5 +51,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.ROLE_USER)
                 .build();
         userRepository.save(newUser);
+    }
+
+    // Complete registration new user
+    @Override
+    public void completeRegistrationNewUser(UserDetails userDetails, String firstName, String lastName) {
+        User userDb = userRepository.findByUsername(userDetails.getUsername());
+        userDb.setFirstName(firstName);
+        userDb.setLastName(lastName);
+        userRepository.save(userDb);
     }
 }

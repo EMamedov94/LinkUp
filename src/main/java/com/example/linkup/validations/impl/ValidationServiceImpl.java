@@ -18,7 +18,7 @@ public class ValidationServiceImpl implements ValidationService {
 
     // Validation new user for registration
     @Override
-    public void validateNewUser(UserDto userDto) {
+    public void validateNewUser(User userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             throw new UserAlreadyExistsException();
         }

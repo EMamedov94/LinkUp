@@ -4,6 +4,6 @@ import com.example.linkup.models.User;
 import com.example.linkup.models.dto.UserDto;
 
 public interface ValidationService {
-    void validateNewUser(UserDto userDto);
+    void validateNewUser(User userDto);
     User validateCredentials(String username, String password);
 }

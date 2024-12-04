@@ -29,6 +29,9 @@
       <label for="register-password">Пароль:</label>
       <input type="password" id="register-password" th:field="*{password}" placeholder="Введите пароль">
       <button type="submit">Зарегистрироваться</button>
+      <div th:if="${usernameError != null}">
+        <span th:text="${usernameError}" style="color: red;"></span>
+      </div>
       <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></div>
       <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></div>
     </form>

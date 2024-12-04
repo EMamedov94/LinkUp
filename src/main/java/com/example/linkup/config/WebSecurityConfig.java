@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -28,7 +29,9 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .ignoringRequestMatchers("/auth/**", "/profile/logout"))
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
                                 "/",
@@ -40,12 +43,13 @@ public class WebSecurityConfig {
                         sessionAuthenticationStrategy.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .formLogin(formLogin -> formLogin
-                        .loginPage("/")
+                        .loginPage("/auth/authPage")
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/profile/logout")
                         .invalidateHttpSession(true)
-                        .deleteCookies("SESSION")
-                        .logoutSuccessUrl("/")
+                        .deleteCookies("token", "JSESSIONID")
+                        .logoutSuccessUrl("/auth/authPage")
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
