@@ -1,6 +1,7 @@
 package com.example.linkup.services.friend.impl;
 
 import com.example.linkup.enums.FriendStatus;
+import com.example.linkup.exceptions.FriendshipAlreadyExistsException;
 import com.example.linkup.models.Friendship;
 import com.example.linkup.models.User;
 import com.example.linkup.repositories.FriendshipRepository;
@@ -9,11 +10,8 @@ import com.example.linkup.services.friend.FriendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +20,18 @@ public class FriendServiceImpl implements FriendService {
     private final FriendshipRepository friendshipRepository;
 
     private boolean isFriend(Long userId, Long friendId) {
-        return friendshipRepository.areFriendsById(userId, friendId);
+        if (friendshipRepository.areFriendsById(userId, friendId)) {
+            throw new FriendshipAlreadyExistsException();
+        } else {
+            return true;
+        }
+    }
+
+    private boolean hasSentFriendRequest(Long userId, Long friendId) {
+        if (friendshipRepository.existsBySenderIdAndReceiverIdAndStatus(userId, friendId, FriendStatus.PENDING)) {
+            throw new FriendshipAlreadyExistsException();
+        }
+        return true;
     }
 
     // Show accepted friend list
@@ -38,17 +47,10 @@ public class FriendServiceImpl implements FriendService {
         return friendshipRepository.findFriendsRequestListByUsername(userDetails.getUsername());
     }
 
-    @Override
-    public void addFriend(Long userId, Long friendId) {
-        if (isFriend(userId, friendId)) {
-            friendshipRepository.save(new Friendship());
-        }
-    }
-
     // Send friend request
     @Override
     public void sendFriendRequest(Long userId, Long friendId) {
-        if (!isFriend(userId, friendId)) {
+        if (hasSentFriendRequest(userId, friendId)) {
             Friendship friendship = Friendship.builder()
                     .sender(new User(userId))
                     .receiver(new User(friendId))
@@ -58,11 +60,12 @@ public class FriendServiceImpl implements FriendService {
         }
     }
 
+    // Accept friend request
     @Override
     public void acceptFriendRequest(String currentUser, Long friendId) {
         User userDb = userRepository.findByUsername(currentUser);
 
-        if (!isFriend(userDb.getId(), friendId)) {
+        if (isFriend(userDb.getId(), friendId)) {
             friendshipRepository.acceptFriendRequest(userDb.getId(), friendId);
         }
 

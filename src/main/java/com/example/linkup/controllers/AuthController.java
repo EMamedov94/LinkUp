@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     private final AuthenticationService authenticationService;
     private final TokenService tokenService;
-    private final JwtService jwtService;
 
     // Auth form
     @GetMapping("/authPage")

@@ -2,12 +2,7 @@ package com.example.linkup.models;
 
 import com.example.linkup.enums.Role;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -21,10 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
-public class User implements UserDetails {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@EqualsAndHashCode(callSuper = true)
+public class User extends BaseEntity implements UserDetails {
     private String username;
     private String password;
 
@@ -54,6 +47,6 @@ public class User implements UserDetails {
     }
 
     public User(Long id) {
-        this.id = id;
+        super(id);
     }
 }
