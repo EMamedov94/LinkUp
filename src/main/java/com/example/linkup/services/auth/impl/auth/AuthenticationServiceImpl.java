@@ -2,6 +2,7 @@ package com.example.linkup.services.auth.impl.auth;
 
 import com.example.linkup.config.JwtService;
 import com.example.linkup.enums.Role;
+import com.example.linkup.exceptions.UnauthorizedException;
 import com.example.linkup.models.User;
 import com.example.linkup.models.dto.UserDto;
 import com.example.linkup.repositories.UserRepository;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
