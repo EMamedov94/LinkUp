@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li><a th:href="@{/profile}">Profile</a></li>
+            <li><a th:href="@{/friends/friendsList}">Friends</a></li>
+            <li><a th:href="@{/posts}">Posts</a></li>
+            <li>
+                <form th:action="@{/profile/logout}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Logout</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Список запросов в друзья</h1>
+        <div class="friends-list">
+            <ul>
+                <li th:each="friend : ${friends}">
+                    <div class="friend">
+                        <h2 th:text="${friend.firstName} + ' ' + ${friend.lastName}">Friend Name</h2>
+                    </div>
+<!--                    <div>-->
+<!--                        <form th:action="@{/friends/acceptFriend/{id}(id=${user.id})}" method="post">-->
+<!--                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>-->
+<!--                            <button type="submit">Принять</button>-->
+<!--                        </form>-->
+<!--                    </div>-->
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
