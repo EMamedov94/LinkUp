@@ -28,15 +28,22 @@
             <h2>Имя: <span th:text="${user.firstName}"></span></h2>
             <h2>Фамилия: <span th:text="${user.lastName}"></span></h2>
         </div>
-        <div th:if="${!areFriends && !isOwnProfile}">
-            <form th:action="@{/friends/sendFriendRequest/{id}(id=${user.id})}" method="post">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit">Добавить в друзья</button>
-            </form>
-            <form th:action="@{/friends/acceptFriend/{id}(id=${user.id})}" method="post">
-                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                <button type="submit">Принять</button>
-            </form>
+        <div th:if="${!isOwnProfile}">
+            <div th:if="${friendStatus.isPresent() && friendStatus.get().name() == 'PENDING'}">
+                <span>Заявка уже отправлена</span>
+            </div>
+            <div th:if="${!areFriends && (!friendStatus.isPresent() || friendStatus.get().name() == 'REJECTED')}">
+                <form th:action="@{/friends/sendFriendRequest/{id}(id=${user.id})}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Добавить в друзья</button>
+                </form>
+            </div>
+            <div th:if="${areFriends}">
+                <form th:action="@{/friends/deleteFriend/{id}(id=${user.id})}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Удалить</button>
+                </form>
+            </div>
         </div>
         <div class="posts">
             <h1>Посты</h1>

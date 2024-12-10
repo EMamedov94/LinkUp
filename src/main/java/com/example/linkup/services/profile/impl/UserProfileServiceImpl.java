@@ -20,7 +20,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public User showUserProfile(User user) {
-        return userRepository.findByUsername(user.getUsername());
+    public User showUserProfile(UserDetails userDetails) {
+        return userRepository.findByUsername(userDetails.getUsername());
     }
 }

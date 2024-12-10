@@ -4,7 +4,6 @@ import com.example.linkup.models.dto.auth.CompleteRegistrationNewUserDto;
 import com.example.linkup.models.dto.auth.LoginUserDto;
 import com.example.linkup.models.dto.auth.RegistrationNewUserDto;
 import com.example.linkup.services.auth.AuthenticationService;
-import com.example.linkup.services.token.TokenService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationService authenticationService;
-    private final TokenService tokenService;
 
     // Auth form
     @GetMapping("/authPage")

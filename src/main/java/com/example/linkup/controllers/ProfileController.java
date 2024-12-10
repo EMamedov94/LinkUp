@@ -1,5 +1,6 @@
 package com.example.linkup.controllers;
 
+import com.example.linkup.enums.FriendStatus;
 import com.example.linkup.models.User;
 import com.example.linkup.services.friend.FriendService;
 import com.example.linkup.services.profile.UserProfileService;
@@ -26,10 +27,12 @@ public class ProfileController {
                               Model model, @PathVariable Long id) {
 
         User userDb = userProfileService.findUserProfile(id);
-        boolean areFriends = friendService.isFriend(user.getId(), id);
+        Optional<FriendStatus> friendStatus = friendService.getFriendStatus(user.getId(), userDb.getId());
+        boolean areFriends = friendStatus.map(status -> status == FriendStatus.ACCEPTED).orElse(false);
         boolean isOwnProfile = user.getId().equals(id);
 
         model.addAttribute("user", userDb);
+        model.addAttribute("friendStatus", friendStatus);
         model.addAttribute("areFriends", areFriends);
         model.addAttribute("isOwnProfile", isOwnProfile);
 

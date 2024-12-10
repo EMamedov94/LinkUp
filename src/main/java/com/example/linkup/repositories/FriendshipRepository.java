@@ -19,26 +19,48 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
     @Query("UPDATE Friendship f " +
             "SET f.status = 'ACCEPTED' " +
             "WHERE (f.sender.id IN (:user1, :user2) AND f.receiver.id IN (:user1, :user2)) ")
-    void acceptFriendRequest(@Param("user1") Long user1,
-                             @Param("user2") Long user2);
-
-    boolean existsBySenderIdAndReceiverIdAndStatus(Long senderId, Long receiverId, FriendStatus status);
+    void acceptFriendRequest(
+            @Param("user1") Long user1,
+            @Param("user2") Long user2
+    );
 
     @Query("SELECT COUNT(f) > 0 " +
             "FROM Friendship f " +
             "WHERE (f.sender.id IN (:user1, :user2) AND f.receiver.id IN (:user1, :user2)) " +
             "AND f.status = 'ACCEPTED'")
-    boolean areFriendsById(@Param("user1") Long user1,
-                           @Param("user2") Long user2);
+    boolean areFriendsById(
+            @Param("user1") Long user1,
+            @Param("user2") Long user2
+    );
 
     @Query("SELECT f.receiver FROM Friendship f WHERE f.sender.username = :username AND f.status = 'ACCEPTED' " +
             "UNION " +
             "SELECT f.sender FROM Friendship f WHERE f.receiver.username = :username AND f.status = 'ACCEPTED'" )
-    List<User> findAcceptedFriendsListByUsername(@Param("username") String username);
+    List<User> findAcceptedFriendsListByUsername(
+            @Param("username") String username
+    );
 
     @Query("SELECT f.sender " +
             "FROM Friendship f " +
             "WHERE f.status = 'PENDING' " +
             "AND f.receiver.username = :username")
-    List<User> findFriendsRequestListByUsername(@Param("username") String username);
+    List<User> findFriendsRequestListByUsername(
+            @Param("username") String username
+    );
+
+    @Query("SELECT f FROM Friendship f " +
+            "WHERE (f.sender.id = :userId AND f.receiver.id = :friendId) " +
+            "OR (f.sender.id = :friendId AND f.receiver.id = :userId) ")
+    Optional<Friendship> findFriendshipByUserId(
+            @Param("userId") Long userId,
+            @Param("friendId") Long friendId
+    );
+
+    @Query("SELECT f FROM Friendship f " +
+            "WHERE (f.sender.id = :userId AND f.receiver.id = :friendId) " +
+            "OR (f.sender.id = :friendId AND f.receiver.id = :userId) ")
+    Optional<Friendship> findFriendshipStatusByUserID(
+            @Param("userId") Long userId,
+            @Param("friendId") Long friendId
+    );
 }

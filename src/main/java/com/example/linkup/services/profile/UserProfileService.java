@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface UserProfileService {
     User findUserProfile(Long id);
-    User showUserProfile(User user);
+    User showUserProfile(UserDetails userDetails);
 }
