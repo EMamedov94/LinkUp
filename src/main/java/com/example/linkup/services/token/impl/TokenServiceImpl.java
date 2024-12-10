@@ -2,6 +2,7 @@ package com.example.linkup.services.token.impl;
 
 import com.example.linkup.config.JwtService;
 import com.example.linkup.models.User;
+import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.token.TokenService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

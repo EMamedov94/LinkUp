@@ -2,7 +2,9 @@ package com.example.linkup.services.auth.impl;
 
 import com.example.linkup.enums.Role;
 import com.example.linkup.models.User;
-import com.example.linkup.models.dto.UserDto;
+import com.example.linkup.models.dto.auth.CompleteRegistrationNewUserDto;
+import com.example.linkup.models.dto.auth.LoginUserDto;
+import com.example.linkup.models.dto.auth.RegistrationNewUserDto;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.auth.AuthenticationService;
 import com.example.linkup.services.token.TokenService;
@@ -27,24 +29,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     // Login user
     @Override
-    public User loginUser(UserDto loginUser, HttpServletResponse response) {
-        User user = validationService.validateCredentials(loginUser.getUsername(), loginUser.getPassword());
+    public User loginUser(LoginUserDto userDto, HttpServletResponse response) {
+//        validationService.validateCredentials(userDto.getUsername(), userDto.getPassword());
+        User userDb = userRepository.findByUsername(userDto.getUsername());
 
-        tokenService.addTokenToCookie(user, response);
+        tokenService.addTokenToCookie(userDb, response);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginUser.getUsername(),
-                        loginUser.getPassword()
+                        userDto.getUsername(),
+                        userDto.getPassword()
                 )
         );
 
-        return user;
+        return userDb;
     }
 
     // Registration new user
     @Override
-    public void registrationNewUser(User userDto) {
+    public void registrationNewUser(RegistrationNewUserDto userDto, HttpServletResponse response) {
         validationService.validateNewUser(userDto);
 
         User newUser = User.builder()
@@ -53,14 +56,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .role(Role.ROLE_USER)
                 .build();
         userRepository.save(newUser);
+
+        tokenService.addTokenToCookie(newUser, response);
     }
 
     // Complete registration new user
     @Override
-    public void completeRegistrationNewUser(UserDetails userDetails, String firstName, String lastName) {
+    public void completeRegistrationNewUser(UserDetails userDetails, CompleteRegistrationNewUserDto userDto) {
         User userDb = userRepository.findByUsername(userDetails.getUsername());
-        userDb.setFirstName(firstName);
-        userDb.setLastName(lastName);
+        userDb.setFirstName(userDto.getFirstName());
+        userDb.setLastName(userDto.getLastName());
         userRepository.save(userDb);
     }
 }
