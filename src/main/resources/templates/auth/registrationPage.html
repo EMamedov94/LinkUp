@@ -8,17 +8,17 @@
 <body>
 <div class="container">
     <div class="registration-form">
-        <h1>Register - Step 2</h1>
+        <h1>Регистрация часть - 2</h1>
         <form th:action="@{/auth/completeRegistrationForm}" method="post">
             <div class="form-group">
-                <label for="firstName">First Name</label>
+                <label for="firstName">Имя</label>
                 <input type="text" id="firstName" name="firstName" placeholder="Введите имя" required>
             </div>
             <div class="form-group">
-                <label for="lastName">Last Name</label>
+                <label for="lastName">Фамилия</label>
                 <input type="text" id="lastName" name="lastName" placeholder="Введите фамилию" required>
             </div>
-            <button type="submit">Complete Registration</button>
+            <button type="submit">Завершить регистрацию</button>
         </form>
     </div>
 </div>

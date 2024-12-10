@@ -22,8 +22,8 @@ public class FriendController {
     // Friends list
     @GetMapping("/friendsList")
     public String fiendsListPage(Model model,
-                                 @AuthenticationPrincipal UserDetails userDetails) {
-        List<User> friendsList = friendService.showFriendsList(userDetails);
+                                 @AuthenticationPrincipal User user) {
+        List<User> friendsList = friendService.showFriendsList(user);
         model.addAttribute("friends", friendsList);
 
         return "/profile/friends/friendsPage";
@@ -32,8 +32,8 @@ public class FriendController {
     // Friends requests
     @GetMapping("/friendsRequests")
     public String friendsRequestsPage(Model model,
-                                      @AuthenticationPrincipal UserDetails userDetails) {
-        List<User> requestsList = friendService.showFriendsRequestList(userDetails);
+                                      @AuthenticationPrincipal User user) {
+        List<User> requestsList = friendService.showFriendsRequestList(user);
         model.addAttribute("friends", requestsList);
 
         return "/profile/friends/friendsRequestsPage";
@@ -42,18 +42,26 @@ public class FriendController {
     // Send friend request
     @PostMapping("/sendFriendRequest/{id}")
     public String sendFriendRequest(@PathVariable Long id,
-                            @AuthenticationPrincipal UserDetails userDetails) {
-        User currentUser = userProfileService.showUserProfile(userDetails);
+                            @AuthenticationPrincipal User user) {
+        User currentUser = userProfileService.showUserProfile(user);
         friendService.sendFriendRequest(currentUser.getId(), id);
 
         return "redirect:/profile/profilePage/" + id;
     }
 
+    // Accept friend request
     @PostMapping("/acceptFriend/{id}")
     public String acceptFriend(@PathVariable Long id,
-                               @AuthenticationPrincipal UserDetails userDetails) {
-        friendService.acceptFriendRequest(userDetails.getUsername(), id);
+                               @AuthenticationPrincipal User user) {
+        friendService.acceptFriendRequest(user.getUsername(), id);
 
+        return "/profile/friends/friendsRequestsPage";
+    }
+
+    @PostMapping("/deleteFriend/{id}")
+    public String deleteUser(@PathVariable Long id,
+                             @AuthenticationPrincipal User user) {
+        friendService.deleteFriend(user.getId(), id);
         return "redirect:/profile/profilePage/" + id;
     }
 }

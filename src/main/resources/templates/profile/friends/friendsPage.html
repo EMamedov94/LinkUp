@@ -11,13 +11,13 @@
     <!-- Sidebar -->
     <div class="sidebar">
         <ul>
-            <li><a th:href="@{/profile}">Profile</a></li>
-            <li><a th:href="@{/friends/friendsList}">Friends</a></li>
-            <li><a th:href="@{/posts}">Posts</a></li>
+            <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
+            <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
+            <li><a th:href="@{/friends/friendsList}">Сообщения</a></li>
             <li>
                 <form th:action="@{/profile/logout}" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit">Logout</button>
+                    <button type="submit">Выйти</button>
                 </form>
             </li>
         </ul>
@@ -30,12 +30,14 @@
             <ul>
                 <li th:each="friend : ${friends}">
                     <div class="friend">
-                        <h2 th:text="${friend.firstName} + ' ' + ${friend.lastName}">Friend Name</h2>
+                        <a th:href="@{/profile/profilePage/{id}(id=${friend.id})}">
+                            <h2 th:text="${friend.firstName} + ' ' + ${friend.lastName}">Имя друга</h2>
+                        </a>
                     </div>
                 </li>
             </ul>
         </div>
-        <a th:href="@{/friends/friendsRequests}">запросы</a>
+        <a th:href="@{/friends/friendsRequests}">Запросы в друзья</a>
     </div>
 </div>
 </body>

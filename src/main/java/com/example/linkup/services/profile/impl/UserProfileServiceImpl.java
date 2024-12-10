@@ -5,10 +5,7 @@ import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.profile.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
@@ -23,7 +20,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     @Override
-    public User showUserProfile(UserDetails userDetails) {
-        return userRepository.findByUsername(userDetails.getUsername());
+    public User showUserProfile(User user) {
+        return userRepository.findByUsername(user.getUsername());
     }
 }

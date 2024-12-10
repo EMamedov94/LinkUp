@@ -1,18 +1,17 @@
-package com.example.linkup.services.auth.impl.auth;
+package com.example.linkup.services.auth.impl;
 
-import com.example.linkup.config.JwtService;
 import com.example.linkup.enums.Role;
-import com.example.linkup.exceptions.UnauthorizedException;
 import com.example.linkup.models.User;
 import com.example.linkup.models.dto.UserDto;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.auth.AuthenticationService;
+import com.example.linkup.services.token.TokenService;
 import com.example.linkup.validations.ValidationService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +22,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final ValidationService validationService;
     private final AuthenticationManager authenticationManager;
-    private final JwtService jwtService;
+    private final TokenService tokenService;
 
 
     // Login user
     @Override
-    public User loginUser(UserDto loginUser) {
+    public User loginUser(UserDto loginUser, HttpServletResponse response) {
         User user = validationService.validateCredentials(loginUser.getUsername(), loginUser.getPassword());
+
+        tokenService.addTokenToCookie(user, response);
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -37,8 +38,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                         loginUser.getPassword()
                 )
         );
-        var token = jwtService.generateToken(user);
-        user.setToken(token);
+
         return user;
     }
 

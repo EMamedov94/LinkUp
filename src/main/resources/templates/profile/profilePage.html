@@ -10,13 +10,13 @@
 <div class="container">
     <div class="sidebar">
         <ul>
-            <li><a href="/">Главная</a></li>
+            <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
             <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
-            <li><a href="/pages">Сообщения</a></li>
+            <li><a th:href="@{/friends/friendsList}">Сообщения</a></li>
             <li>
                 <form th:action="@{/profile/logout}" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit">Logout</button>
+                    <button type="submit">Выйти</button>
                 </form>
             </li>
         </ul>
@@ -28,19 +28,16 @@
             <h2>Имя: <span th:text="${user.firstName}"></span></h2>
             <h2>Фамилия: <span th:text="${user.lastName}"></span></h2>
         </div>
-        <div>
+        <div th:if="${!areFriends && !isOwnProfile}">
             <form th:action="@{/friends/sendFriendRequest/{id}(id=${user.id})}" method="post">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit">Добавить в друзья</button>
             </form>
-        </div>
-        <div>
             <form th:action="@{/friends/acceptFriend/{id}(id=${user.id})}" method="post">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <button type="submit">Принять</button>
             </form>
         </div>
-
         <div class="posts">
             <h1>Посты</h1>
             <div class="post">

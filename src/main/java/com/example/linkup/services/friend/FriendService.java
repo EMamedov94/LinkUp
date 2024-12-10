@@ -6,8 +6,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.List;
 
 public interface FriendService {
-    List<User> showFriendsList(UserDetails userDetails);
-    List<User> showFriendsRequestList(UserDetails userDetails);
+    List<User> showFriendsList(User user);
+    List<User> showFriendsRequestList(User user);
     void sendFriendRequest(Long userId, Long friendId);
     void acceptFriendRequest(String currentUser, Long friendId);
+    void deleteFriend(Long userId, Long friendId);
+    boolean isFriend(Long userId, Long friendId);
 }

@@ -27,8 +27,11 @@ public class ValidationServiceImpl implements ValidationService {
     // Validation username and password for login
     @Override
     public User validateCredentials(String username, String password) {
-
         User userDb = userRepository.findByUsername(username);
+
+        if (userDb == null) {
+            throw new InvalidLoginOrPasswordException();
+        }
 
         if (!passwordEncoder.matches(password, userDb.getPassword())) {
             throw new InvalidLoginOrPasswordException();

@@ -2,6 +2,9 @@ package com.example.linkup.models;
 
 import com.example.linkup.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,10 +21,14 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
+
     private String username;
     private String password;
 
+//    @Pattern(regexp = "^[А-Яа-я]", message = "Имя должно начинаться с заглавной буквы и быть написано русскими буквами")
     private String firstName;
+
+//    @Pattern(regexp = "^[А-Яа-я]", message = "Фамилия должно начинаться с заглавной буквы и быть написано русскими буквами")
     private String lastName;
 
     @Transient

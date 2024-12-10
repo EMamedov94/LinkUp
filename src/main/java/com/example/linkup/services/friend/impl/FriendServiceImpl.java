@@ -17,20 +17,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FriendServiceImpl implements FriendService {
+
     private final UserRepository userRepository;
     private final FriendshipRepository friendshipRepository;
 
     // Show accepted friend list
     @Override
-    public List<User> showFriendsList(UserDetails userDetails) {
-        User userDb = userRepository.findByUsername(userDetails.getUsername());
+    public List<User> showFriendsList(User user) {
+        User userDb = userRepository.findByUsername(user.getUsername());
         return friendshipRepository.findAcceptedFriendsListByUsername(userDb.getUsername());
     }
 
     // Show friend request list
     @Override
-    public List<User> showFriendsRequestList(UserDetails userDetails) {
-        return friendshipRepository.findFriendsRequestListByUsername(userDetails.getUsername());
+    public List<User> showFriendsRequestList(User user) {
+        return friendshipRepository.findFriendsRequestListByUsername(user.getUsername());
     }
 
     // Send friend request
@@ -56,13 +57,15 @@ public class FriendServiceImpl implements FriendService {
         }
     }
 
+    @Override
+    public void deleteFriend(Long userId, Long friendId) {
+
+    }
+
     // Check friends is already exists
-    private boolean isFriend(Long userId, Long friendId) {
-        if (friendshipRepository.areFriendsById(userId, friendId)) {
-            throw new FriendshipAlreadyExistsException();
-        } else {
-            return true;
-        }
+    @Override
+    public boolean isFriend(Long userId, Long friendId) {
+        return !friendshipRepository.areFriendsById(userId, friendId);
     }
 
     // Check requests on DB

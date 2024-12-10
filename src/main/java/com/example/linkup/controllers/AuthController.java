@@ -46,10 +46,9 @@ public class AuthController {
             return "auth/authPage";
         }
 
-        User loggedInUser = authenticationService.loginUser(user);
-        tokenService.addTokenToCookie(loggedInUser, response);
+        Long userDbId = authenticationService.loginUser(user, response).getId();
 
-        return "redirect:/profile/profilePage";
+        return "redirect:/profile/profilePage/" + userDbId;
     }
 
     // Registration new user
@@ -57,7 +56,7 @@ public class AuthController {
     public String registrationNewUser(@ModelAttribute("user") @Valid User userDto,
                                       BindingResult bindingResult,
                                       HttpServletResponse response) {
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasFieldErrors("username") || bindingResult.hasFieldErrors("password")) {
             return "auth/authPage";
         }
 

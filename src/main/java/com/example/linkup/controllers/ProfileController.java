@@ -1,6 +1,7 @@
 package com.example.linkup.controllers;
 
 import com.example.linkup.models.User;
+import com.example.linkup.services.friend.FriendService;
 import com.example.linkup.services.profile.UserProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,18 +19,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProfileController {
     private final UserProfileService userProfileService;
+    private final FriendService friendService;
 
-    @GetMapping("/profilePage")
-    public String userProfile(Model model, @AuthenticationPrincipal UserDetails userDetails) {
-        User user = userProfileService.showUserProfile(userDetails);
-        model.addAttribute("user", user);
-        return "/profile/profilePage";
-    }
+    @GetMapping("/profilePage/{id}")
+    public String userProfile(@AuthenticationPrincipal User user,
+                              Model model, @PathVariable Long id) {
 
-    @GetMapping("profilePage/{id}")
-    public String userProfile(Model model, @PathVariable Long id) {
-        User user = userProfileService.findUserProfile(id);
-        model.addAttribute("user", user);
+        User userDb = userProfileService.findUserProfile(id);
+        boolean areFriends = friendService.isFriend(user.getId(), id);
+        boolean isOwnProfile = user.getId().equals(id);
+
+        model.addAttribute("user", userDb);
+        model.addAttribute("areFriends", areFriends);
+        model.addAttribute("isOwnProfile", isOwnProfile);
+
         return "/profile/profilePage";
     }
 }

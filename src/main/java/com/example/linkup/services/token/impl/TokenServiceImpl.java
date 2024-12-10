@@ -22,5 +22,7 @@ public class TokenServiceImpl implements TokenService {
         cookie.setPath("/");
         cookie.setMaxAge(7 * 24 * 60 * 60);
         response.addCookie(cookie);
+
+        user.setToken(token);
     }
 }

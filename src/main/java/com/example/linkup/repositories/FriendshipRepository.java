@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
+
     @Modifying
     @Transactional
     @Query("UPDATE Friendship f " +
