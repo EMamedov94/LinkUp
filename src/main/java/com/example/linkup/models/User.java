@@ -21,6 +21,9 @@ import java.util.List;
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
+    public User(String username) {
+        this.username = username;
+    }
 
     private String username;
     private String password;

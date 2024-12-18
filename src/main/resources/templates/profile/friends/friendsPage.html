@@ -13,7 +13,7 @@
         <ul>
             <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
             <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
-            <li><a th:href="@{/friends/friendsList}">Сообщения</a></li>
+            <li><a th:href="@{/messages/messagesPage}">Сообщения</a></li>
             <li>
                 <form th:action="@{/profile/logout}" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>

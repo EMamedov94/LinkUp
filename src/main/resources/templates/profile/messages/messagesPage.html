@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <ul>
+            <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
+            <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
+            <li><a th:href="@{/messages/messagesPage}">Сообщения</a></li>
+            <li>
+                <form th:action="@{/profile/logout}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">Выйти</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Сообщения</h1>
+        <h1>Чат</h1>
+
+        <div>
+            <label for="receiverUsername">Кому отправить:</label>
+            <input type="text" id="receiverUsername" placeholder="Имя пользователя">
+        </div>
+
+        <div>
+            <label for="messageInput">Сообщение:</label>
+            <input type="text" id="messageInput" placeholder="Введите сообщение">
+            <button onclick="sendMessage()">Отправить</button>
+        </div>
+
+        <h2>История сообщений</h2>
+        <div id="messageContainer">
+            <ul>
+                <li th:each="message : ${messages}">
+                    <span th:text="'[' + ${message.timestamp} + ']'"></span>
+                    <strong th:text="${message.sender.username}"></strong>
+                    <span> -> </span>
+                    <strong th:text="${message.receiver.username}"></strong>
+                    <span th:text="': ' + ${message.text}"></span>
+                </li>
+            </ul>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+        <script>
+            let stompClient;
+
+            function connect() {
+                const socket = new SockJS('/ws');
+                stompClient = Stomp.over(socket);
+                stompClient.connect({}, function (frame) {
+                    console.log('Подключено: ' + frame);
+
+// Подписываемся на личные сообщения
+                    stompClient.subscribe('/user/queue/messages', function (message) {
+                        showMessage(JSON.parse(message.body));
+                    });
+                });
+            }
+
+            function sendMessage() {
+                const receiverUsername = document.getElementById('receiverUsername').value;
+                const content = document.getElementById('messageInput').value;
+
+                const message = {
+                    receiverUsername: receiverUsername,
+                    content: content
+                };
+
+                stompClient.send("/app/messages/sendMessage", {}, JSON.stringify(message));
+            }
+
+            function showMessage(message) {
+                const messageContainer = document.getElementById('messageContainer');
+                const messageElement = document.createElement('div');
+                messageElement.innerText = `[${message.timestamp}] ${message.sender.username} -> ${message.receiver.username}: ${message.content}`;
+                messageContainer.appendChild(messageElement);
+            }
+
+            connect();
+        </script>
+    </div>
+</div>
+</body>
+</html>
