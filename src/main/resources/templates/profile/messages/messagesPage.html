@@ -8,91 +8,37 @@
 </head>
 <body>
 <div class="container">
+
     <!-- Sidebar -->
-    <div class="sidebar">
-        <ul>
-            <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
-            <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
-            <li><a th:href="@{/messages/messagesPage}">Сообщения</a></li>
-            <li>
-                <form th:action="@{/profile/logout}" method="post">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit">Выйти</button>
-                </form>
-            </li>
-        </ul>
-    </div>
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <h1>Сообщения</h1>
-        <h1>Чат</h1>
+    <div class="chat-container">
 
-        <div>
-            <label for="receiverUsername">Кому отправить:</label>
-            <input type="text" id="receiverUsername" placeholder="Имя пользователя">
+        <!-- Заголовок чата -->
+        <div class="chat-header">
+            <h1><span th:text="${chatPartnerName}"></span></h1>
         </div>
 
-        <div>
-            <label for="messageInput">Сообщение:</label>
-            <input type="text" id="messageInput" placeholder="Введите сообщение">
-            <button onclick="sendMessage()">Отправить</button>
-        </div>
-
-        <h2>История сообщений</h2>
-        <div id="messageContainer">
+        <!-- Область с сообщениями -->
+        <div class="chat-messages" id="chat-messages">
             <ul>
-                <li th:each="message : ${messages}">
-                    <span th:text="'[' + ${message.timestamp} + ']'"></span>
-                    <strong th:text="${message.sender.username}"></strong>
-                    <span> -> </span>
-                    <strong th:text="${message.receiver.username}"></strong>
-                    <span th:text="': ' + ${message.text}"></span>
+                <!-- Сообщения -->
+                <li th:each="message : ${messages}"
+                    th:classappend="${message.sender.username == #authentication.principal.username} ? 'message sent' : 'message received'">
+                    <p th:text="${message.text}">Текст сообщения</p>
+<!--                    <span class="time" th:text="${#dates.format(message.timestamp, 'HH:mm')}">10:30</span>-->
                 </li>
             </ul>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+        <!-- Форма отправки сообщения -->
+        <form th:action="@{/messages/{chatId}/send(chatId=${chatId})}" method="post" class="chat-form">
+            <input type="text" name="messageText" placeholder="Написать сообщение..." autocomplete="off" required>
+            <button type="submit">Отправить</button>
+        </form>
 
-        <script>
-            let stompClient;
-
-            function connect() {
-                const socket = new SockJS('/ws');
-                stompClient = Stomp.over(socket);
-                stompClient.connect({}, function (frame) {
-                    console.log('Подключено: ' + frame);
-
-// Подписываемся на личные сообщения
-                    stompClient.subscribe('/user/queue/messages', function (message) {
-                        showMessage(JSON.parse(message.body));
-                    });
-                });
-            }
-
-            function sendMessage() {
-                const receiverUsername = document.getElementById('receiverUsername').value;
-                const content = document.getElementById('messageInput').value;
-
-                const message = {
-                    receiverUsername: receiverUsername,
-                    content: content
-                };
-
-                stompClient.send("/app/messages/sendMessage", {}, JSON.stringify(message));
-            }
-
-            function showMessage(message) {
-                const messageContainer = document.getElementById('messageContainer');
-                const messageElement = document.createElement('div');
-                messageElement.innerText = `[${message.timestamp}] ${message.sender.username} -> ${message.receiver.username}: ${message.content}`;
-                messageContainer.appendChild(messageElement);
-            }
-
-            connect();
-        </script>
     </div>
+
 </div>
 </body>
 </html>

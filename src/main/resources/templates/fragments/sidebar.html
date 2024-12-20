@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div th:fragment="sidebar" class="sidebar">
+    <ul>
+        <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
+        <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
+        <li><a th:href="@{/messages/}">Сообщения</a></li>
+        <li>
+            <form th:action="@{/profile/logout}" method="post">
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                <button type="submit">Выйти</button>
+            </form>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

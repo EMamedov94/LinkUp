@@ -1,10 +1,11 @@
 package com.example.linkup.services.message.impl;
 
-import com.example.linkup.models.ChatRoom;
 import com.example.linkup.models.Message;
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.message.ChatRoomDto;
 import com.example.linkup.repositories.ChatRoomRepository;
 import com.example.linkup.repositories.MessageRepository;
+import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Message saveMessage(User sender, User receiver, String text) {
@@ -41,7 +43,14 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List<ChatRoom> getChatRoomsBetweenUsers(String senderUsername, String receiverUsername) {
-        return chatRoomRepository.findChatRoomBySenderIdAndReceiverId()
+    public List<ChatRoomDto> getChatRoomsBetweenUsersByUsername(String username) {
+        User currentUser = userRepository.findByUsername(username);
+
+        return chatRoomRepository.findChatRoomsWithLastMessages(currentUser.getId());
+    }
+
+    @Override
+    public List<Message> getMessagesInChat(Long id) {
+        return messageRepository.findAllByChatRoomIdOrderByTimestampAsc(id);
     }
 }

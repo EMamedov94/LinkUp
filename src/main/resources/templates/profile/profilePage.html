@@ -8,19 +8,9 @@
 </head>
 <body>
 <div class="container">
-    <div class="sidebar">
-        <ul>
-            <li><a th:href="@{/profile/profilePage/{id}(id=${#authentication.principal.id})}">Моя страница</a></li>
-            <li><a th:href="@{/friends/friendsList}">Друзья</a></li>
-            <li><a th:href="@{/messages/messagesPage}">Сообщения</a></li>
-            <li>
-                <form th:action="@{/profile/logout}" method="post">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit">Выйти</button>
-                </form>
-            </li>
-        </ul>
-    </div>
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
 
     <div class="main-content">
         <div class="profile-info">

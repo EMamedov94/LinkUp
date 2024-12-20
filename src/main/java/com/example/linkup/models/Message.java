@@ -18,6 +18,10 @@ public class Message extends BaseEntity{
     private User sender;
 
     @ManyToOne
+    @JoinColumn(name = "chat_room_id")
+    private ChatRoom chatRoom;
+
+    @ManyToOne
     @JoinColumn(name = "receiver_id", nullable = false)
     private User receiver;
 
