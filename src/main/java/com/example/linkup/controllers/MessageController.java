@@ -30,7 +30,7 @@ public class MessageController {
     public String chatRooms(Model model,
                                @AuthenticationPrincipal UserDetails userDetails) {
 
-        List<ChatRoomDto> chatRooms = messageService.getChatRoomsBetweenUsersByUsername(userDetails.getUsername());
+        List<ChatRoom> chatRooms = messageService.getChatRoomsBetweenUsersByUsername(userDetails.getUsername());
 
         model.addAttribute("chatRooms", chatRooms);
 
@@ -43,13 +43,14 @@ public class MessageController {
                            Model model) {
 
         List<Message> messageList = messageService.getMessagesInChat(id);
-        String chatPartnerName = messageList.stream()
-                        .map(message -> {
-                            String sender = message.getSender().getUsername();
-                            String receiver = message.getReceiver().getUsername();
-                            return !sender.equals(userDetails.getUsername()) ? sender : receiver;
-                        })
-                                .findFirst().orElse("Собеседник");
+        String chatPartnerName = messageList.stream().findFirst()
+                .map(message -> {
+                    User sender = message.getSender();
+                    User receiver = message.getReceiver();
+                    User chatPartner = !sender.getUsername().equals(userDetails.getUsername()) ? sender : receiver;
+                    return chatPartner.getFirstName() + " " + chatPartner.getLastName();
+                })
+                .orElse("Собеседник");  // Если нет сообщений, возвращаем "Собеседник"
 
         model.addAttribute("messages", messageList);
         model.addAttribute("chatPartnerName", chatPartnerName);

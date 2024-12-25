@@ -20,11 +20,11 @@
                 <li th:each="chatRoom : ${chatRooms}" class="chat-item">
                     <a th:href="@{/messages/{id}(id=${chatRoom.id})}" class="chat-link">
                         <div class="chat-avatar">
-                            <img th:src="@{/images/users/{id}.jpg(id=${chatRoom.companionId})}" alt="" class="chat-avatar-image">
+<!--                            <img th:src="@{/images/users/{id}.jpg(id=${chatRoom.})}" alt="" class="chat-avatar-image">-->
                         </div>
                         <div class="chat-info">
-<!--                            <div th:text="${#authentication.principal.id == chatRoom.sender.id ? chatRoom.receiver.firstName + ' ' + chatRoom.receiver.lastName : chatRoom.sender.firstName + ' ' + chatRoom.sender.lastName}"></div>-->
-<!--                            <div class="chat-last-message" th:if="${chatRoom.messages.size() > 0}" th:text="${chatRoom.messages[0].text}"></div>-->
+                            <div th:text="${#authentication.principal.id == chatRoom.sender.id ? chatRoom.receiver.firstName + ' ' + chatRoom.receiver.lastName : chatRoom.sender.firstName + ' ' + chatRoom.sender.lastName}"></div>
+                            <div class="chat-last-message" th:if="${chatRoom.messages.size() > 0}" th:text="${chatRoom.messages[0].text}"></div>
                         </div>
                     </a>
                 </li>

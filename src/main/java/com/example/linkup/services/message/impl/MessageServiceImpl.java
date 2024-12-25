@@ -1,8 +1,8 @@
 package com.example.linkup.services.message.impl;
 
+import com.example.linkup.models.ChatRoom;
 import com.example.linkup.models.Message;
 import com.example.linkup.models.User;
-import com.example.linkup.models.dto.message.ChatRoomDto;
 import com.example.linkup.repositories.ChatRoomRepository;
 import com.example.linkup.repositories.MessageRepository;
 import com.example.linkup.repositories.UserRepository;
@@ -21,6 +21,8 @@ public class MessageServiceImpl implements MessageService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
+
+    // Save new message
     @Override
     public Message saveMessage(User sender, User receiver, String text) {
         Message message = new Message();
@@ -32,21 +34,17 @@ public class MessageServiceImpl implements MessageService {
         return messageRepository.save(message);
     }
 
+    // Get chat rooms with 2 users
     @Override
-    public List<Message> getMessagesBetweenUsers(String senderUsername, String receiverUsername) {
-        return messageRepository.findBySenderUsernameAndReceiverUsername(senderUsername, receiverUsername);
-    }
-
-    @Override
-    public List<Message> getMessagesForUser(String receiverUsername) {
-        return messageRepository.findByReceiverUsername(receiverUsername);
-    }
-
-    @Override
-    public List<ChatRoomDto> getChatRoomsBetweenUsersByUsername(String username) {
+    public List<ChatRoom> getChatRoomsBetweenUsersByUsername(String username) {
         User currentUser = userRepository.findByUsername(username);
 
         return chatRoomRepository.findChatRoomsWithLastMessages(currentUser.getId());
+    }
+
+    @Override
+    public String getPartnerNameByChatId(Long id) {
+        return "";
     }
 
     @Override

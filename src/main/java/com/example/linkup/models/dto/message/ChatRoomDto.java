@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 public class ChatRoomDto {
-    private Long id;
+    private Long chatRoomId;
     private Long companionId;
     private String text;
     private LocalDateTime timestamp;
