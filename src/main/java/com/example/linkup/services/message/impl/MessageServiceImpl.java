@@ -3,10 +3,12 @@ package com.example.linkup.services.message.impl;
 import com.example.linkup.models.ChatRoom;
 import com.example.linkup.models.Message;
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.message.MessageDto;
 import com.example.linkup.repositories.ChatRoomRepository;
 import com.example.linkup.repositories.MessageRepository;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.message.MessageService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +26,13 @@ public class MessageServiceImpl implements MessageService {
 
     // Save new message
     @Override
-    public Message saveMessage(User sender, User receiver, String text) {
+    public Message saveMessage(MessageDto messageDto) {
+
         Message message = new Message();
+        message.setChatRoom(chatRoom);
         message.setSender(sender);
         message.setReceiver(receiver);
-        message.setText(text);
+        message.setText(messageDto.getText());
         message.setTimestamp(LocalDateTime.now());
 
         return messageRepository.save(message);
@@ -40,11 +44,6 @@ public class MessageServiceImpl implements MessageService {
         User currentUser = userRepository.findByUsername(username);
 
         return chatRoomRepository.findChatRoomsWithLastMessages(currentUser.getId());
-    }
-
-    @Override
-    public String getPartnerNameByChatId(Long id) {
-        return "";
     }
 
     @Override

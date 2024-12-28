@@ -4,9 +4,12 @@ import com.example.linkup.models.ChatRoom;
 import com.example.linkup.models.Message;
 import com.example.linkup.models.User;
 import com.example.linkup.models.dto.message.ChatRoomDto;
+import com.example.linkup.models.dto.message.MessageDto;
 import com.example.linkup.services.message.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -50,28 +54,46 @@ public class MessageController {
                     User chatPartner = !sender.getUsername().equals(userDetails.getUsername()) ? sender : receiver;
                     return chatPartner.getFirstName() + " " + chatPartner.getLastName();
                 })
-                .orElse("Собеседник");  // Если нет сообщений, возвращаем "Собеседник"
+                .orElse("Собеседник");
 
+        model.addAttribute("chatId", id);
         model.addAttribute("messages", messageList);
         model.addAttribute("chatPartnerName", chatPartnerName);
 
         return "profile/messages/messagesPage";
     }
 
-    @MessageMapping("/sendMessage")
-    public void sendMessage(@AuthenticationPrincipal UserDetails userDetails,
-                            Message message) {
-        String senderUsername = userDetails.getUsername();
+    @MessageMapping("/sendMessage/{chatId}")
+    @SendTo("/topic/{chatId}")
+    public void sendMessage(@DestinationVariable String chatId,
+                            Principal principal,
+                            MessageDto messageDto) {
 
-        User sender = new User(senderUsername);
-        User receiver = new User(message.getReceiver().getUsername());
-
-        Message savedMessage = messageService.saveMessage(sender, receiver, message.getText());
+        Message savedMessage = messageService.saveMessage(messageDto);
 
         brokerMessagingTemplate.convertAndSendToUser(
-                message.getReceiver().getUsername(),
-                "/queue/messages",
+                messageDto.getSenderId().toString(),
+                "/queue/messages/" + chatId,
                 savedMessage
         );
     }
+
+//    @MessageMapping("/sendMessage/{chatId}")
+//    @SendTo("/topic/{chatId}")
+//    public void sendMessage(@DestinationVariable String chatId,
+//                            @AuthenticationPrincipal UserDetails userDetails,
+//                            Message message) {
+//        String senderUsername = userDetails.getUsername();
+//
+//        User sender = new User(senderUsername);
+//        User receiver = new User(message.getReceiver().getUsername());
+//
+//        Message savedMessage = messageService.saveMessage(sender, receiver, message.getText());
+//
+//        brokerMessagingTemplate.convertAndSendToUser(
+//                message.getReceiver().getUsername(),
+//                "/queue/messages/" + chatId,
+//                savedMessage
+//        );
+//    }
 }

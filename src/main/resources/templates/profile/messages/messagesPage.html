@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile Page</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -32,13 +34,71 @@
         </div>
 
         <!-- Форма отправки сообщения -->
-        <form th:action="@{/messages/{chatId}/send(chatId=${chatId})}" method="post" class="chat-form">
-            <input type="text" name="messageText" placeholder="Написать сообщение..." autocomplete="off" required>
+        <form id="chatForm" class="chat-form">
+            <input type="text" id="messageText" placeholder="Написать сообщение..." autocomplete="off" required>
             <button type="submit">Отправить</button>
         </form>
 
     </div>
 
+    <script>
+        let stompClient = null;
+
+        // Функция для подключения к WebSocket серверу
+        function connect() {
+            const socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function(frame) {
+
+                // Подписка на личные сообщения, чтобы получать их в реальном времени
+                stompClient.subscribe('/topic/1', function(message) {
+                    showMessage(JSON.parse(message.body));
+                });
+            });
+        }
+
+        // Функция для отправки сообщений через WebSocket
+        function sendMessage(chatId, senderId, receiverId, messageText) {
+            const message = {
+                chatRoomId: chatId,
+                senderId: senderId,
+                receiverId: receiverId,
+                text: messageText
+            };
+
+            if (stompClient !== null) {
+                stompClient.send(`/app/sendMessage/1`, {}, JSON.stringify(message));
+                document.getElementById('messageText').value = ''; // Очистить поле ввода после отправки
+            } else {
+                console.error('WebSocket connection is not established.');
+            }
+        }
+
+        // Функция для отображения полученных сообщений
+        function showMessage(message) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageElement = document.createElement('div');
+            messageElement.innerText = `[${message.timestamp}] ${message.sender.username} -> ${message.receiver.username}: ${message.content}`;
+            messageContainer.appendChild(messageElement);
+        }
+
+        // Обработчик отправки формы
+        document.getElementById('chatForm').addEventListener('submit', function(event) {
+            event.preventDefault();  // Отменяем стандартную отправку формы
+
+            const messageText = document.getElementById('messageText').value;
+            const senderId = 1;
+            const receiverId = 2;
+            const chatId = 1;
+
+            // Отправляем сообщение
+            sendMessage(chatId, senderId, receiverId, messageText);
+        });
+
+        // Инициализация WebSocket при загрузке страницы
+        connect();
+    </script>
 </div>
 </body>
 </html>
