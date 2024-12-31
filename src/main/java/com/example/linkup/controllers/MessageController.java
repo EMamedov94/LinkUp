@@ -9,11 +9,13 @@ import com.example.linkup.services.message.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,53 +49,44 @@ public class MessageController {
                            Model model) {
 
         List<Message> messageList = messageService.getMessagesInChat(id);
-        String chatPartnerName = messageList.stream().findFirst()
+        User chatPartner = messageList.stream().findFirst()
                 .map(message -> {
                     User sender = message.getSender();
                     User receiver = message.getReceiver();
-                    User chatPartner = !sender.getUsername().equals(userDetails.getUsername()) ? sender : receiver;
-                    return chatPartner.getFirstName() + " " + chatPartner.getLastName();
-                })
-                .orElse("Собеседник");
+                    if (!sender.getUsername().equals(userDetails.getUsername())) {
+                        return sender;
+                    }
+                    return receiver;
+                }).orElse(new User());
+
+//        String chatPartnerName = messageList.stream().findFirst()
+//                .map(message -> {
+//                    User sender = message.getSender();
+//                    User receiver = message.getReceiver();
+//                    User chatPartner = !sender.getUsername().equals(userDetails.getUsername()) ? sender : receiver;
+//                    return chatPartner.getFirstName() + " " + chatPartner.getLastName();
+//                })
+//                .orElse("Собеседник");
 
         model.addAttribute("chatId", id);
         model.addAttribute("messages", messageList);
-        model.addAttribute("chatPartnerName", chatPartnerName);
+        model.addAttribute("chatPartnerName", chatPartner);
+//        model.addAttribute("chatPartnerName", chatPartnerName);
 
         return "profile/messages/messagesPage";
     }
 
     @MessageMapping("/sendMessage/{chatId}")
-    @SendTo("/topic/{chatId}")
-    public void sendMessage(@DestinationVariable String chatId,
-                            Principal principal,
-                            MessageDto messageDto) {
+//    @SendTo("/topic/{chatId}")
+    public void sendMessage(@DestinationVariable Long chatId,
+                            @Payload MessageDto messageDto) {
 
         Message savedMessage = messageService.saveMessage(messageDto);
 
         brokerMessagingTemplate.convertAndSendToUser(
-                messageDto.getSenderId().toString(),
+                savedMessage.getReceiver().getUsername(),
                 "/queue/messages/" + chatId,
-                savedMessage
+                messageDto
         );
     }
-
-//    @MessageMapping("/sendMessage/{chatId}")
-//    @SendTo("/topic/{chatId}")
-//    public void sendMessage(@DestinationVariable String chatId,
-//                            @AuthenticationPrincipal UserDetails userDetails,
-//                            Message message) {
-//        String senderUsername = userDetails.getUsername();
-//
-//        User sender = new User(senderUsername);
-//        User receiver = new User(message.getReceiver().getUsername());
-//
-//        Message savedMessage = messageService.saveMessage(sender, receiver, message.getText());
-//
-//        brokerMessagingTemplate.convertAndSendToUser(
-//                message.getReceiver().getUsername(),
-//                "/queue/messages/" + chatId,
-//                savedMessage
-//        );
-//    }
 }

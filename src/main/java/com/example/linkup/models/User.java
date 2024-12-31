@@ -1,6 +1,7 @@
 package com.example.linkup.models;
 
 import com.example.linkup.enums.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;

@@ -18,7 +18,7 @@
 
         <!-- Заголовок чата -->
         <div class="chat-header">
-            <h1><span th:text="${chatPartnerName}"></span></h1>
+            <h1><span th:text="${chatPartnerName.firstName}"></span></h1>
         </div>
 
         <!-- Область с сообщениями -->
@@ -46,15 +46,21 @@
 
         // Функция для подключения к WebSocket серверу
         function connect() {
+            // Создаем WebSocket соединение через SockJS
             const socket = new SockJS('/ws');
             stompClient = Stomp.over(socket);
 
             stompClient.connect({}, function(frame) {
+                console.log("Подключено к WebSocket серверу:", frame);
 
-                // Подписка на личные сообщения, чтобы получать их в реальном времени
-                stompClient.subscribe('/topic/1', function(message) {
+                // Подписка на личные сообщения
+                stompClient.subscribe('/queue/messages/1', function(message) {
+                    console.log("iiii")
+                    // Когда сообщение приходит, вызываем showMessage
                     showMessage(JSON.parse(message.body));
                 });
+            }, function(error) {
+                console.error('Ошибка подключения к WebSocket:', error);
             });
         }
 
@@ -68,18 +74,31 @@
             };
 
             if (stompClient !== null) {
+                // Отправляем сообщение на сервер через WebSocket
                 stompClient.send(`/app/sendMessage/1`, {}, JSON.stringify(message));
-                document.getElementById('messageText').value = ''; // Очистить поле ввода после отправки
+
+                // Очищаем поле ввода после отправки
+                document.getElementById('messageText').value = '';
             } else {
-                console.error('WebSocket connection is not established.');
+                console.error('WebSocket соединение не установлено.');
             }
         }
 
         // Функция для отображения полученных сообщений
         function showMessage(message) {
-            const messageContainer = document.getElementById('messageContainer');
-            const messageElement = document.createElement('div');
-            messageElement.innerText = `[${message.timestamp}] ${message.sender.username} -> ${message.receiver.username}: ${message.content}`;
+            // Находим контейнер для сообщений
+            const messageContainer = document.getElementById('chat-messages');
+            console.log("Добавление сообщения в DOM");
+
+            // Создаем новый элемент списка для сообщения
+            const messageElement = document.createElement('li');
+
+            // Создаем элемент для текста сообщения и добавляем его в li
+            const messageText = document.createElement('p');
+            messageText.innerText = message.text;
+            messageElement.appendChild(messageText);
+
+            // Добавляем новый элемент в контейнер сообщений
             messageContainer.appendChild(messageElement);
         }
 
@@ -87,10 +106,13 @@
         document.getElementById('chatForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Отменяем стандартную отправку формы
 
+            // Получаем текст сообщения из поля ввода
             const messageText = document.getElementById('messageText').value;
-            const senderId = 1;
-            const receiverId = 2;
-            const chatId = 1;
+
+            // Устанавливаем ID отправителя и получателя (возможно, получатель — это другой пользователь)
+            const senderId = 1;  // Пример, это можно динамически получить
+            const receiverId = [[${chatPartnerName.id}]];  // Получаем ID получателя из шаблона (например, через Thymeleaf)
+            const chatId = 1;  // Пример, это можно также получить динамически
 
             // Отправляем сообщение
             sendMessage(chatId, senderId, receiverId, messageText);
