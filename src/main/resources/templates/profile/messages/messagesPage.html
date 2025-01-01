@@ -28,7 +28,8 @@
                 <li th:each="message : ${messages}"
                     th:classappend="${message.sender.username == #authentication.principal.username} ? 'message sent' : 'message received'">
                     <p th:text="${message.text}">Текст сообщения</p>
-<!--                    <span class="time" th:text="${#dates.format(message.timestamp, 'HH:mm')}">10:30</span>-->
+                    <span class="time" th:text="${#temporals.format(message.timestamp, 'HH:mm')}"></span>
+<!--                    <span class="time" th:text="${#dates.format(message.timestamp, 'HH:mm')}"></span>-->
                 </li>
             </ul>
         </div>
@@ -40,87 +41,12 @@
         </form>
 
     </div>
-
-    <script>
-        let stompClient = null;
-
-        // Функция для подключения к WebSocket серверу
-        function connect() {
-            // Создаем WebSocket соединение через SockJS
-            const socket = new SockJS('/ws');
-            stompClient = Stomp.over(socket);
-
-            stompClient.connect({}, function(frame) {
-                console.log("Подключено к WebSocket серверу:", frame);
-
-                // Подписка на личные сообщения
-                stompClient.subscribe('/queue/messages/1', function(message) {
-                    console.log("iiii")
-                    // Когда сообщение приходит, вызываем showMessage
-                    showMessage(JSON.parse(message.body));
-                });
-            }, function(error) {
-                console.error('Ошибка подключения к WebSocket:', error);
-            });
-        }
-
-        // Функция для отправки сообщений через WebSocket
-        function sendMessage(chatId, senderId, receiverId, messageText) {
-            const message = {
-                chatRoomId: chatId,
-                senderId: senderId,
-                receiverId: receiverId,
-                text: messageText
-            };
-
-            if (stompClient !== null) {
-                // Отправляем сообщение на сервер через WebSocket
-                stompClient.send(`/app/sendMessage/1`, {}, JSON.stringify(message));
-
-                // Очищаем поле ввода после отправки
-                document.getElementById('messageText').value = '';
-            } else {
-                console.error('WebSocket соединение не установлено.');
-            }
-        }
-
-        // Функция для отображения полученных сообщений
-        function showMessage(message) {
-            // Находим контейнер для сообщений
-            const messageContainer = document.getElementById('chat-messages');
-            console.log("Добавление сообщения в DOM");
-
-            // Создаем новый элемент списка для сообщения
-            const messageElement = document.createElement('li');
-
-            // Создаем элемент для текста сообщения и добавляем его в li
-            const messageText = document.createElement('p');
-            messageText.innerText = message.text;
-            messageElement.appendChild(messageText);
-
-            // Добавляем новый элемент в контейнер сообщений
-            messageContainer.appendChild(messageElement);
-        }
-
-        // Обработчик отправки формы
-        document.getElementById('chatForm').addEventListener('submit', function(event) {
-            event.preventDefault();  // Отменяем стандартную отправку формы
-
-            // Получаем текст сообщения из поля ввода
-            const messageText = document.getElementById('messageText').value;
-
-            // Устанавливаем ID отправителя и получателя (возможно, получатель — это другой пользователь)
-            const senderId = 1;  // Пример, это можно динамически получить
-            const receiverId = [[${chatPartnerName.id}]];  // Получаем ID получателя из шаблона (например, через Thymeleaf)
-            const chatId = 1;  // Пример, это можно также получить динамически
-
-            // Отправляем сообщение
-            sendMessage(chatId, senderId, receiverId, messageText);
-        });
-
-        // Инициализация WebSocket при загрузке страницы
-        connect();
-    </script>
 </div>
+<script th:inline="javascript">
+    const senderId = [[${#authentication.principal.id}]];
+    const chatId = [[${chatId}]];
+    const receiverId = [[${chatPartnerName.id}]];
+</script>
+<script src="/js/message-service.js"></script>
 </body>
 </html>
