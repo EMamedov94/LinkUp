@@ -4,8 +4,7 @@ function connect() {
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
 
-    stompClient.connect({}, function() {
-
+    stompClient.connect({}, function(frame) {
         // Подписка на личные сообщения
         stompClient.subscribe('/user/queue/messages/' + chatId, function(message) {
             // Когда сообщение приходит, вызываем showMessage
@@ -40,28 +39,18 @@ function sendMessage(chatId, senderId, receiverId, messageText) {
 
 // Функция для отображения полученных сообщений
 function showMessage(message) {
-    // Находим контейнер для сообщений
     const messageContainer = document.querySelector('#chat-messages ul');
-
-    // Создаем новый элемент списка для сообщения
     const messageElement = document.createElement('li');
-    if (message.senderId === senderId) {
-        messageElement.classList.add('message', 'sent'); // Стиль для отправленных сообщений
-    } else {
-        messageElement.classList.add('message', 'received'); // Стиль для полученных сообщений
-    }
-
-    // Создаем элемент для текста сообщения и добавляем его в li
     const messageText = document.createElement('p');
     const time = document.createElement('span');
 
+    messageElement.classList.add('message', senderId === senderId ? 'sent' : 'received');
     time.classList.add('time');
+
     messageText.innerText = message.text;
+    time.innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    messageElement.appendChild(messageText);
-    messageElement.appendChild(time);
-
-    // Добавляем новый элемент в контейнер сообщений
+    messageElement.append(messageText, time);
     messageContainer.appendChild(messageElement);
 }
 
@@ -69,7 +58,6 @@ function showMessage(message) {
 document.getElementById('chatForm').addEventListener('submit', function(event) {
     event.preventDefault();  // Отменяем стандартную отправку формы
 
-    // Получаем текст сообщения из поля ввода
     const messageText = document.getElementById('messageText').value;
 
     // Отправляем сообщение

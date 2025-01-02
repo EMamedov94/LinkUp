@@ -25,11 +25,12 @@
         <div class="chat-messages" id="chat-messages">
             <ul>
                 <!-- Сообщения -->
-                <li th:each="message : ${messages}"
+                <li class="message-item"
+                    th:each="message : ${messages}"
+                    th:data-timestamp="${message.timestamp}"
                     th:classappend="${message.sender.username == #authentication.principal.username} ? 'message sent' : 'message received'">
                     <p th:text="${message.text}">Текст сообщения</p>
                     <span class="time" th:text="${#temporals.format(message.timestamp, 'HH:mm')}"></span>
-<!--                    <span class="time" th:text="${#dates.format(message.timestamp, 'HH:mm')}"></span>-->
                 </li>
             </ul>
         </div>
