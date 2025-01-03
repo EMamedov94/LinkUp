@@ -17,4 +17,8 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             "AND m.timestamp = (SELECT MAX(msg.timestamp) FROM Message msg WHERE msg.chatRoom.id = c.id) " +
             "ORDER BY m.timestamp DESC")
     List<ChatRoom> findChatRoomsWithLastMessages(@Param("userId") Long userId);
+
+    @Query("SELECT c.id FROM ChatRoom c " +
+            "WHERE c.sender.id = :userId OR c.receiver.id = :userId ")
+    Long findChatRoomByUserId(@Param("userId") Long userId);
 }

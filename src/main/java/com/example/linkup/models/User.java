@@ -1,11 +1,7 @@
 package com.example.linkup.models;
 
 import com.example.linkup.enums.Role;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,10 +17,8 @@ import java.util.List;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"posts", "sentFriendships", "receivedFriendships"})
 public class User extends BaseEntity implements UserDetails {
-    public User(String username) {
-        this.username = username;
-    }
 
     private String username;
     private String password;

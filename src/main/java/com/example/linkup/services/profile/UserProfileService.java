@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface UserProfileService {
     User findUserProfile(Long id);
     User showUserProfile(UserDetails userDetails);
+    Long findUserIdById(Long id);
 }

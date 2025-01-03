@@ -23,4 +23,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     public User showUserProfile(UserDetails userDetails) {
         return userRepository.findByUsername(userDetails.getUsername());
     }
+
+    @Override
+    public Long findUserIdById(Long id) {
+        return userRepository.findUserIdById(id);
+    }
 }
