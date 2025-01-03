@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class Message extends BaseEntity{
 
     @ManyToOne
-    @JoinColumn(name = "sender_id", nullable = false)
+    @JoinColumn(name = "sender_id")
     private User sender;
 
     @ManyToOne
@@ -25,7 +25,7 @@ public class Message extends BaseEntity{
     private ChatRoom chatRoom;
 
     @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
+    @JoinColumn(name = "receiver_id")
     private User receiver;
 
     private String text;

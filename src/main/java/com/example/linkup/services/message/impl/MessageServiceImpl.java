@@ -17,10 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -73,18 +75,37 @@ public class MessageServiceImpl implements MessageService {
         return chatRoomRepository.findChatRoomByUserId(id);
     }
 
-    private ChatRoom createNewChatRoom(Long userId) {
-        // Создаем новый чат между двумя пользователями
+    @Override
+    public User getPartnerChatRoom(Long chatRoomId, String currentUser) {
+        ChatRoom room = chatRoomRepository.findById(chatRoomId).orElseThrow(ChatRoomNotFoundException::new);
+
+        if (room.getSender().getUsername().equals(currentUser)) {
+            return room.getReceiver();
+        } else if (room.getReceiver().getUsername().equals(currentUser)) {
+            return room.getSender();
+        } else {
+            throw new IllegalArgumentException("Current user is not part of this chat");
+        }
+    }
+
+    @Override
+    public Long getOrCreateChatRoom(Long user1, Long user2) {
+        Optional<ChatRoom> existingChat = chatRoomRepository.findChatRoomBySenderAndReceiver(user1, user2);
+        User sender = userRepository.findById(user1)
+                .orElseThrow(() -> new IllegalArgumentException("Sender not found"));
+        User receiver = userRepository.findById(user2)
+                .orElseThrow(() -> new IllegalArgumentException("Receiver not found"));
+
+        if (existingChat.isPresent()) {
+            return existingChat.get().getId();
+        }
+
+        // Если чата нет, создаем новый
         ChatRoom chatRoom = new ChatRoom();
-
-        // Нужно задать sender и receiver в зависимости от логики
-        User sender = ;
-        User receiver = userProfileService.findUserProfile(userId); // получаем пользователя по id
-
         chatRoom.setSender(sender);
         chatRoom.setReceiver(receiver);
 
-        // Сохраняем новый чат в базу
-        return chatRoomRepository.save(chatRoom);
+        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+        return savedChatRoom.getId();
     }
 }

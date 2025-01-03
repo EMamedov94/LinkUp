@@ -13,4 +13,6 @@ public interface MessageService {
     List<ChatRoom> getChatRoomsBetweenUsersByUsername(String username);
     Page<Message> getMessagesInChat(Long id, int page, int size);
     Long getChatRoomIdByUserId(Long id);
+    Long getOrCreateChatRoom(Long user1, Long user2);
+    User getPartnerChatRoom(Long chatRoomId, String currentUser);
 }

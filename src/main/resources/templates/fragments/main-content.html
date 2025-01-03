@@ -22,7 +22,15 @@
             </form>
         </div>
         <div>
-            <a th:href="@{/messages/{id}(id=${chatId})}">написать</a>
+            <div th:if="${chatId != null}">
+                <a th:href="@{/messages/{id}(id=${chatId})}">написать</a>
+            </div>
+            <div th:if="${chatId == null}">
+                <form th:action="@{/messages/createChatRoom/{userId}(userId=${user.id})}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button type="submit">написать</button>
+                </form>
+            </div>
         </div>
         <div th:if="${areFriends}">
             <form th:action="@{/friends/deleteFriend/{id}(id=${user.id})}" method="post">

@@ -14,10 +14,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/messages/")
@@ -27,10 +26,18 @@ public class MessageController {
     private final MessageService messageService;
     private final SimpMessagingTemplate brokerMessagingTemplate;
 
+    // Get chat rooms
     @GetMapping("/")
-    public String chatRooms(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("chatRooms", messageService.getChatRoomsBetweenUsersByUsername(userDetails.getUsername()));
+    public String chatRooms(Principal currentUser, Model model) {
+        model.addAttribute("chatRooms", messageService.getChatRoomsBetweenUsersByUsername(currentUser.getName()));
         return "profile/messages/chatRooms";
+    }
+
+    // Create or get chatRoom
+    @PostMapping("/createChatRoom/{userId}")
+    public String createChatRoom(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+        Long chatId = messageService.getOrCreateChatRoom(user.getId(), userId);
+        return "redirect:/messages/" + chatId;
     }
 
     // Get messages list by chat id
@@ -39,19 +46,11 @@ public class MessageController {
     public String messages(@PathVariable Long id,
                            @RequestParam(defaultValue = "0") int page,
                            @RequestParam(defaultValue = "10") int size,
-                           @AuthenticationPrincipal UserDetails userDetails,
+                           Principal user,
                            Model model) {
         Page<Message> messageList = messageService.getMessagesInChat(id, page, size);
+        User chatPartner = messageService.getPartnerChatRoom(id, user.getName());
 
-        User chatPartner = messageList.stream().findFirst()
-                .map(message -> {
-                    User sender = message.getSender();
-                    User receiver = message.getReceiver();
-                    if (!sender.getUsername().equals(userDetails.getUsername())) {
-                        return sender;
-                    }
-                    return receiver;
-                }).orElse(new User());
 
         model.addAttribute("chatId", id);
         model.addAttribute("messages", messageList);
