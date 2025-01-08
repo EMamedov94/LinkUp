@@ -1,6 +1,5 @@
 package com.example.linkup.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -22,7 +21,7 @@ public class Post extends BaseEntity {
     @CreatedDate
     private LocalDateTime createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     private User author;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)

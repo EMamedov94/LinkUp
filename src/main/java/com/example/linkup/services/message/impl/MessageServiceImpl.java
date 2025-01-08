@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,7 +33,7 @@ public class MessageServiceImpl implements MessageService {
 
     // Save new message
     @Override
-    @CacheEvict(value = "messages", key = "#messageDto.chatRoomId")
+//    @CacheEvict(value = "messages", key = "#messageDto.chatRoomId")
     public Message saveMessage(MessageDto messageDto) {
         ChatRoom chatRoomDb = chatRoomRepository.findById(messageDto.getChatRoomId())
                 .orElseThrow(ChatRoomNotFoundException::new);
@@ -64,7 +63,7 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    @Cacheable("messages")
+//    @Cacheable("messages")
     public Page<Message> getMessagesInChat(Long id, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "timestamp"));
         return messageRepository.findAllByChatRoomId(id, pageable);

@@ -41,12 +41,14 @@
     </div>
     <div class="posts">
         <h1>Посты</h1>
-        <div class="post">
-            <p>Это мой первый пост!</p>
-        </div>
-        <div class="post">
-            <p>Сегодня был отличный день!</p>
-        </div>
+        <ul>
+            <li th:each="post : ${posts}">
+                <h3 th:text="${post.title}" th:title="${post.title}"></h3>
+                <p th:text="${post.content}"></p>
+                <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+                <a th:href="@{/profile/profilePage/{id}(id=${post.author.id})}" th:text="${post.author.firstName}"></a>
+            </li>
+        </ul>
     </div>
 </div>
 </body>
