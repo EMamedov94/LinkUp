@@ -6,10 +6,16 @@ import com.example.linkup.exceptions.FriendshipAlreadyExistsException;
 import com.example.linkup.exceptions.FriendshipNotFoundException;
 import com.example.linkup.models.Friendship;
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.user.UserSearchDto;
+import com.example.linkup.models.projection.UserSearchProjection;
 import com.example.linkup.repositories.FriendshipRepository;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.friend.FriendService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +40,19 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<User> showFriendsRequestList(String username) {
         return friendshipRepository.findFriendsRequestListByUsername(username);
+    }
+
+    // Find users by status ACTIVE for global search
+    @Override
+    public Page<User> showAllActiveUsersFromDb() {
+        Pageable pageable = PageRequest.of(0, 10);
+        return userRepository.findAllUsersByActiveStatus(pageable);
+    }
+
+    @Override
+    public List<UserSearchProjection> findByFilters(String query) {
+//        Pageable pageable = PageRequest.of(0, 10);
+        return userRepository.searchByFirstNameOrLastName(query);
     }
 
     // Send friend request

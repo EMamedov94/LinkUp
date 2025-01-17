@@ -1,20 +1,37 @@
 package com.example.linkup.controllers;
 
 import com.example.linkup.models.User;
+import com.example.linkup.models.dto.user.UserSearchDto;
+import com.example.linkup.models.projection.UserSearchProjection;
 import com.example.linkup.services.friend.FriendService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/friends")
 @RequiredArgsConstructor
 public class FriendController {
     private final FriendService friendService;
+
+    @GetMapping("/globalSearch")
+    public String globalSearch(Model model) {
+        model.addAttribute("users", friendService.showAllActiveUsersFromDb());
+        return "pages/globalSearch";
+    }
+
+    @GetMapping("/search")
+    @ResponseBody
+    public List<UserSearchProjection> searchUsers(@RequestParam("query") String query) {
+        return friendService.findByFilters(query);
+    }
 
     // Friends list
     @GetMapping("/friendsList")

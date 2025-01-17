@@ -1,6 +1,7 @@
 package com.example.linkup.models;
 
 import com.example.linkup.enums.Role;
+import com.example.linkup.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,6 +35,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated(EnumType.STRING)
+    private UserStatus status;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts;

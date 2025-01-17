@@ -48,7 +48,7 @@
                 <p th:text="${post.content}"></p>
                 <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
                 <a th:href="@{/profile/profilePage/{id}(id=${post.author.id})}" th:text="${post.author.firstName}"></a>
-                <form th:action="@{/posts/deletePost/{id}(id=${post.id})}" method="post" th:method="delete">
+                <form th:if="${isOwnProfile}" th:action="@{/posts/deletePost/{id}(id=${post.id})}" method="post" th:method="delete">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <button type="submit">Удалить пост</button>
                 </form>

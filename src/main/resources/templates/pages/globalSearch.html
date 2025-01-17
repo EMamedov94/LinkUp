@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<div class="container">
+
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <div class="search-container">
+        <h1>Поиск пользователей</h1>
+
+        <!-- Строка поиска -->
+        <div class="search-bar">
+            <input type="text" id="searchQuery" placeholder="Введите имя или фамилию" />
+            <button onclick="searchUsers()">Поиск</button>
+        </div>
+
+        <!-- Фильтры -->
+        <div class="filters">
+            <h2>Фильтры</h2>
+            <div class="filter-group">
+                <label for="age">Возраст:</label>
+                <input type="number" id="minAge" placeholder="Мин. возраст" />
+                <input type="number" id="maxAge" placeholder="Макс. возраст" />
+            </div>
+            <div class="filter-group">
+                <label for="gender">Пол:</label>
+                <select id="gender">
+                    <option value="">Любой</option>
+                    <option value="M">Мужской</option>
+                    <option value="F">Женский</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Результаты поиска -->
+        <div id="searchResults" class="search-results">
+            <h2>Результаты поиска</h2>
+            <ul id="resultsList">
+                <li th:each="user : ${users}">
+                    <div class="friend">
+                        <a th:href="@{/profile/profilePage/{id}(id=${user.id})}">
+                            <h2 th:text="${user.firstName} + ' ' + ${user.lastName}">Имя друга</h2>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<script>
+    // Функция для отправки запроса
+    function searchUsers() {
+        const query = document.getElementById('searchQuery').value;
+
+        // Проверяем, если строка поиска не пуста
+        if (query.length > 0) {
+            const params = new URLSearchParams({
+                query: query
+            });
+
+            fetch(`/friends/search?${params.toString()}`)
+                .then(response => response.json())
+                .then(data => {
+                    const resultsList = document.getElementById('resultsList');
+                    resultsList.innerHTML = ''; // Очистка старых результатов
+
+                    // Добавляем результаты на страницу
+                    data.forEach(user => {
+                        const listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                        <div class="friend">
+                            <a href="/profile/profilePage/${user.id}">
+                                <h2>${user.firstName} ${user.lastName}</h2>
+                            </a>
+                        </div>
+                    `;
+                        resultsList.appendChild(listItem);
+                    });
+                })
+                .catch(error => console.error('Ошибка:', error));
+        }
+    }
+
+    // Добавляем обработчик событий на поле ввода
+    document.getElementById('searchQuery').addEventListener('input', function() {
+        searchUsers(); // Вызываем функцию поиска при каждом изменении в поле
+    });
+</script>
+</body>
+</html>

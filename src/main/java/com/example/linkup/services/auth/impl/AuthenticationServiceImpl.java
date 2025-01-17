@@ -1,6 +1,7 @@
 package com.example.linkup.services.auth.impl;
 
 import com.example.linkup.enums.Role;
+import com.example.linkup.enums.UserStatus;
 import com.example.linkup.models.User;
 import com.example.linkup.models.dto.auth.CompleteRegistrationNewUserDto;
 import com.example.linkup.models.dto.auth.LoginUserDto;
@@ -30,7 +31,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     // Login user
     @Override
     public User loginUser(LoginUserDto userDto, HttpServletResponse response) {
-//        validationService.validateCredentials(userDto.getUsername(), userDto.getPassword());
         User userDb = userRepository.findByUsername(userDto.getUsername());
 
         tokenService.addTokenToCookie(userDb, response);
@@ -54,6 +54,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .username(userDto.getUsername())
                 .password(passwordEncoder.encode(userDto.getPassword()))
                 .role(Role.ROLE_USER)
+                .status(UserStatus.ACTIVE)
                 .build();
         userRepository.save(newUser);
 
