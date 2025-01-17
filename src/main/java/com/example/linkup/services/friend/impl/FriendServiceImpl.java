@@ -25,15 +25,15 @@ public class FriendServiceImpl implements FriendService {
 
     // Show accepted friend list
     @Override
-    public List<User> showFriendsList(UserDetails userDetails) {
-        User userDb = userRepository.findByUsername(userDetails.getUsername());
+    public List<User> showFriendsList(String username) {
+        User userDb = userRepository.findByUsername(username);
         return friendshipRepository.findAcceptedFriendsListByUsername(userDb.getUsername());
     }
 
     // Show friend request list
     @Override
-    public List<User> showFriendsRequestList(UserDetails userDetails) {
-        return friendshipRepository.findFriendsRequestListByUsername(userDetails.getUsername());
+    public List<User> showFriendsRequestList(String username) {
+        return friendshipRepository.findFriendsRequestListByUsername(username);
     }
 
     // Send friend request
@@ -69,8 +69,8 @@ public class FriendServiceImpl implements FriendService {
 
     // Delete friend
     @Override
-    public void deleteFriend(UserDetails userDetails, Long friendId) {
-        User userDb = userRepository.findByUsername(userDetails.getUsername());
+    public void deleteFriend(String username, Long friendId) {
+        User userDb = userRepository.findByUsername(username);
 
         Friendship friendship = friendshipRepository.findFriendshipByUserId(userDb.getId(), friendId)
                 .orElseThrow(FriendshipNotFoundException::new);

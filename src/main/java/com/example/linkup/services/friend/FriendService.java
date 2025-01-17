@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendService {
-    List<User> showFriendsList(UserDetails userDetails);
-    List<User> showFriendsRequestList(UserDetails userDetails);
+    List<User> showFriendsList(String username);
+    List<User> showFriendsRequestList(String username);
     void sendFriendRequest(Long userId, Long friendId);
     void acceptFriendRequest(String currentUser, Long friendId);
-    void deleteFriend(UserDetails userDetails, Long friendId);
+    void deleteFriend(String username, Long friendId);
     boolean isFriend(Long userId, Long friendId);
     Optional<FriendStatus> getFriendStatus(Long userId, Long friendId);
 }

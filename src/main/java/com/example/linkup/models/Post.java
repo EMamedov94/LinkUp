@@ -1,5 +1,6 @@
 package com.example.linkup.models;
 
+import com.example.linkup.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +14,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @ToString(exclude = "comments")
+@Builder
 public class Post extends BaseEntity {
     private String title;
     private String content;
@@ -20,6 +22,9 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     @CreatedDate
     private LocalDateTime createdAt;
+
+    @Enumerated(EnumType.STRING)
+    private PostStatus status;
 
     @ManyToOne()
     private User author;

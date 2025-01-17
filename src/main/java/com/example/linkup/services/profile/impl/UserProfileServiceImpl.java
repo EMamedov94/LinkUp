@@ -4,7 +4,6 @@ import com.example.linkup.models.User;
 import com.example.linkup.repositories.UserRepository;
 import com.example.linkup.services.profile.UserProfileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
@@ -16,16 +15,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     // Show user profile by id
     @Override
     public User findUserProfile(Long id) {
-        return userRepository.findById(id).orElse(new User());
-    }
-
-    @Override
-    public User showUserProfile(UserDetails userDetails) {
-        return userRepository.findByUsername(userDetails.getUsername());
-    }
-
-    @Override
-    public Long findUserIdById(Long id) {
-        return userRepository.findUserIdById(id);
+        return userRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 }
