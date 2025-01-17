@@ -31,7 +31,7 @@ public class FriendServiceImpl implements FriendService {
 
     // Show accepted friend list
     @Override
-    public List<User> showFriendsList(String username) {
+    public List<UserSearchProjection> showFriendsList(String username) {
         User userDb = userRepository.findByUsername(username);
         return friendshipRepository.findAcceptedFriendsListByUsername(userDb.getUsername());
     }
@@ -44,14 +44,13 @@ public class FriendServiceImpl implements FriendService {
 
     // Find users by status ACTIVE for global search
     @Override
-    public Page<User> showAllActiveUsersFromDb() {
+    public Page<UserSearchProjection> showAllActiveUsersFromDb() {
         Pageable pageable = PageRequest.of(0, 10);
         return userRepository.findAllUsersByActiveStatus(pageable);
     }
 
     @Override
     public List<UserSearchProjection> findByFilters(String query) {
-//        Pageable pageable = PageRequest.of(0, 10);
         return userRepository.searchByFirstNameOrLastName(query);
     }
 

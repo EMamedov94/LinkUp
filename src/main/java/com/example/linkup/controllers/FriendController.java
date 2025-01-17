@@ -21,12 +21,14 @@ import java.util.List;
 public class FriendController {
     private final FriendService friendService;
 
+    // Global search friends
     @GetMapping("/globalSearch")
     public String globalSearch(Model model) {
         model.addAttribute("users", friendService.showAllActiveUsersFromDb());
         return "pages/globalSearch";
     }
 
+    // Search friends with filters
     @GetMapping("/search")
     @ResponseBody
     public List<UserSearchProjection> searchUsers(@RequestParam("query") String query) {

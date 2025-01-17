@@ -3,6 +3,7 @@ package com.example.linkup.repositories;
 import com.example.linkup.enums.FriendStatus;
 import com.example.linkup.models.Friendship;
 import com.example.linkup.models.User;
+import com.example.linkup.models.projection.UserSearchProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -32,11 +33,13 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             @Param("user1") Long user1,
             @Param("user2") Long user2
     );
-
-    @Query("SELECT f.receiver FROM Friendship f WHERE f.sender.username = :username AND f.status = 'ACCEPTED' " +
+//u.id as id, u.firstName as firstName, u.lastName as lastName
+    @Query("SELECT f.receiver.id as id, f.receiver.firstName as firstName, f.receiver.lastName as lastName " +
+            "FROM Friendship f WHERE f.sender.username = :username AND f.status = 'ACCEPTED' " +
             "UNION " +
-            "SELECT f.sender FROM Friendship f WHERE f.receiver.username = :username AND f.status = 'ACCEPTED'" )
-    List<User> findAcceptedFriendsListByUsername(
+            "SELECT f.sender.id as id, f.sender.firstName as firstName, f.sender.lastName as lastName " +
+            "FROM Friendship f WHERE f.receiver.username = :username AND f.status = 'ACCEPTED'" )
+    List<UserSearchProjection> findAcceptedFriendsListByUsername(
             @Param("username") String username
     );
 

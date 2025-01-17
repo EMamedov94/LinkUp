@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface FriendService {
-    List<User> showFriendsList(String username);
+    List<UserSearchProjection> showFriendsList(String username);
     List<User> showFriendsRequestList(String username);
-    Page<User> showAllActiveUsersFromDb();
+    Page<UserSearchProjection> showAllActiveUsersFromDb();
     List<UserSearchProjection> findByFilters(String query);
     void sendFriendRequest(Long userId, Long friendId);
     void acceptFriendRequest(String currentUser, Long friendId);

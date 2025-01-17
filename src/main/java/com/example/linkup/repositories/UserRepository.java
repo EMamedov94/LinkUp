@@ -14,9 +14,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByUsername(String username);
     User findByUsername(String username);
 
-    @Query("SELECT u FROM User u " +
+    @Query("SELECT u.id as id, u.firstName as firstName, u.lastName as lastName " +
+            "FROM User u " +
             "WHERE u.status = 'ACTIVE' ")
-    Page<User> findAllUsersByActiveStatus(Pageable pageable);
+    Page<UserSearchProjection> findAllUsersByActiveStatus(Pageable pageable);
 
     @Query("SELECT u.id as id, u.firstName as firstName, u.lastName as lastName " +
             "FROM User u " +
