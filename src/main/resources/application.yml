@@ -16,3 +16,8 @@ spring:
   # Application
   application:
     name: LinkUp
+  servlet:
+    multipart:
+      max-file-size: 2MB
+github:
+  token: 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

@@ -37,6 +37,7 @@ public class PostServiceImpl implements PostService {
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .author(postDto.getAuthor())
+                .imageLink(postDto.getImageLink())
                 .createdAt(LocalDateTime.now())
                 .status(PostStatus.CREATED)
                 .build();

@@ -18,6 +18,7 @@ import java.util.List;
 public class Post extends BaseEntity {
     private String title;
     private String content;
+    private String imageLink;
 
     @Column(nullable = false)
     @CreatedDate

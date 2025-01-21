@@ -33,7 +33,7 @@ public interface FriendshipRepository extends JpaRepository<Friendship, Long> {
             @Param("user1") Long user1,
             @Param("user2") Long user2
     );
-//u.id as id, u.firstName as firstName, u.lastName as lastName
+
     @Query("SELECT f.receiver.id as id, f.receiver.firstName as firstName, f.receiver.lastName as lastName " +
             "FROM Friendship f WHERE f.sender.username = :username AND f.status = 'ACCEPTED' " +
             "UNION " +

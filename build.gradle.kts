@@ -32,6 +32,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-websocket")
 	implementation("org.springframework.boot:spring-boot-starter-cache:3.4.0")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
+	implementation("com.google.code.gson:gson:2.11.0")
 	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")

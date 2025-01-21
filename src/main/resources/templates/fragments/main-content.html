@@ -59,12 +59,14 @@
     <div id="postModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <form class="modal-form" th:action="@{/posts/create}" method="post">
+            <form class="modal-form" th:action="@{/posts/create}" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                 <label for="title">Заголовок:</label>
                 <input type="text" id="title" name="title" required>
                 <label for="content">Содержимое:</label>
                 <textarea id="content" name="content" rows="4" required></textarea>
+                <label for="image">Загрузить изображение:</label>
+                <input type="file" id="image" name="imageUrl" accept="image/*" required>
                 <button type="submit">Опубликовать</button>
             </form>
         </div>
