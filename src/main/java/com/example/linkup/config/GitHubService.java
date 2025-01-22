@@ -20,7 +20,7 @@ import java.util.UUID;
 public class GitHubService {
 
     private final RestTemplate restTemplate;
-    @Value("${GITHUB_TOKEN}")
+    @Value("${github.token}")
     private String gitHubToken;
     private final String repo = "EMamedov94/LinkUp";
 

@@ -20,4 +20,4 @@ spring:
     multipart:
       max-file-size: 2MB
 github:
-  token: ${GITHUB_TOKEN}
+  token:

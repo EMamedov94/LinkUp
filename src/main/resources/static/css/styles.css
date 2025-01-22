@@ -130,6 +130,9 @@ button:hover {
     padding: 15px;
     border-radius: 8px;
 }
+.posts li {
+    max-width: 50%;
+}
 
 .post {
     background-color: #ffffff;
@@ -137,6 +140,10 @@ button:hover {
     border: 1px solid #ddd;
     border-radius: 4px;
     margin-bottom: 10px;
+}
+
+.post-img {
+    max-width: 100%;
 }
 
 h1 {

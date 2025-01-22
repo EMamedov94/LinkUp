@@ -45,6 +45,7 @@
         <ul>
             <li th:each="post : ${posts}">
                 <h3 th:text="${post.title}" th:title="${post.title}"></h3>
+                <img class="post-img" th:src="${post.imageLink}" alt="img">
                 <p th:text="${post.content}"></p>
                 <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
                 <a th:href="@{/profile/profilePage/{id}(id=${post.author.id})}" th:text="${post.author.firstName}"></a>
