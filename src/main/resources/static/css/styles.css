@@ -417,3 +417,27 @@ body {
 .search-results ul li:hover {
     background-color: #f1f1f1;
 }
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.like-btn svg {
+    fill: none;
+    stroke: #ccc;
+    transition: stroke 0.3s ease;
+}
+
+.like-btn.liked svg {
+    stroke: red;  /* Красный цвет, когда лайкнут */
+}
+
+.like-btn span {
+    margin-left: 8px;
+}
+
+.like-count {
+    color: black;
+}

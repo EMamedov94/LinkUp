@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
-@ToString(exclude = {"posts", "sentFriendships", "receivedFriendships"})
+@ToString(exclude = {"posts", "sentFriendships", "receivedFriendships", "likes"})
 public class User extends BaseEntity implements UserDetails {
 
     private String username;
@@ -38,6 +38,9 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserStatus status;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Post> posts;

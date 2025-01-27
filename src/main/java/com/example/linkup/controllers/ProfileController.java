@@ -3,6 +3,7 @@ package com.example.linkup.controllers;
 import com.example.linkup.enums.FriendStatus;
 import com.example.linkup.models.User;
 import com.example.linkup.services.friend.FriendService;
+import com.example.linkup.services.like.LikeService;
 import com.example.linkup.services.message.MessageService;
 import com.example.linkup.services.post.PostService;
 import com.example.linkup.services.profile.UserProfileService;
@@ -31,12 +32,11 @@ public class ProfileController {
                               Model model, @PathVariable Long id) {
 
         User userDb = userProfileService.findUserProfile(id);
-        Optional<FriendStatus> friendStatus = friendService.getFriendStatus(currentUser.getId(), userDb.getId());
 
         model.addAttribute("posts", postService.getPostsByUserId(userDb.getId()));
         model.addAttribute("user", userDb);
         model.addAttribute("chatId", messageService.getChatRoomIdByUserId(id));
-        model.addAttribute("friendStatus", friendStatus);
+        model.addAttribute("friendStatus", friendService.getFriendStatus(currentUser.getId(), userDb.getId()));
         model.addAttribute("areFriends", friendService.isFriend(currentUser.getId(), userDb.getId()));
         model.addAttribute("isOwnProfile", currentUser.getId().equals(id));
 

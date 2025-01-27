@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Data
-@ToString(exclude = "comments")
+@ToString(exclude = {"comments", "likes"})
 @Builder
 public class Post extends BaseEntity {
     private String title;
@@ -30,6 +30,13 @@ public class Post extends BaseEntity {
     @ManyToOne()
     private User author;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes;
+
+    public Post(Long id) {
+        super(id);
+    }
 }

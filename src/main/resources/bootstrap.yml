@@ -1,6 +1,0 @@
-spring:
-  cloud:
-    vault:
-      host: vault.example.com
-      token: my-vault-root-token
-      scheme: https

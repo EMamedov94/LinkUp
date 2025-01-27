@@ -1,19 +1,36 @@
-//package com.example.linkup.models;
-//
-//import jakarta.persistence.Entity;
-//import jakarta.persistence.GeneratedValue;
-//import jakarta.persistence.GenerationType;
-//import jakarta.persistence.Id;
-//import lombok.AllArgsConstructor;
-//import lombok.Data;
-//import lombok.NoArgsConstructor;
-//
-//@Entity
-//@AllArgsConstructor
-//@NoArgsConstructor
-//@Data
-//public class Like {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    private Long id;
-//}
+package com.example.linkup.models;
+
+import com.example.linkup.enums.LikeStatus;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDateTime;
+
+@Table(name = "likes")
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+@EqualsAndHashCode(callSuper = true)
+@ToString(exclude = {"user", "post"})
+public class Like extends BaseEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
+
+    @Enumerated(EnumType.STRING)
+    private LikeStatus status;
+
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+}
